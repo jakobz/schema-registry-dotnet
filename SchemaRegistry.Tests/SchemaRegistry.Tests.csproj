@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2A8AE077-46BB-4E75-A741-111DD52E046D}</ProjectGuid>
+    <ProjectGuid>{FCAB2060-BD99-4E39-BB4D-D1D6A23B8ED6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SchemaRegistry</RootNamespace>
-    <AssemblyName>SchemaRegistry</AssemblyName>
+    <RootNamespace>SchemaRegistry.Tests</RootNamespace>
+    <AssemblyName>SchemaRegistry.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.4.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -44,24 +44,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ISchemaRegistryApi.cs" />
-    <Compile Include="Messages\CompatibilityFlagResponse.cs" />
-    <Compile Include="Messages\CompatibilityLevel.cs" />
-    <Compile Include="Messages\CompatibilityObject.cs" />
-    <Compile Include="Messages\ExistingSchemaResponse.cs" />
-    <Compile Include="Messages\SchemaContainer.cs" />
-    <Compile Include="Messages\SchemaMetadata.cs" />
-    <Compile Include="Messages\SchemaRegistryError.cs" />
-    <Compile Include="Messages\SchemaRegistryErrorCode.cs" />
-    <Compile Include="Messages\SchemaRegistryException.cs" />
-    <Compile Include="SchemaRegistryApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\JsonUtils.cs" />
+    <Compile Include="SchemaRegistryApiTests.cs" />
+    <Compile Include="TestsConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\SchemaRegistry\SchemaRegistry.csproj">
+      <Project>{2a8ae077-46bb-4e75-a741-111dd52e046d}</Project>
+      <Name>SchemaRegistry</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,17 +1,19 @@
-﻿using System;
+﻿using NUnit.Framework;
+using SchemaRegistry.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SchemaRegistry.Utils;
 
-namespace SchemaRegistry.ConsoleTool
+namespace SchemaRegistry.Tests
 {
-    class Program
+    [TestFixture]
+    public class SchemaRegistryApiTests
     {
-        static void Main(string[] args)
+        public void CanReadSchemas()
         {
-            using (var registry = new SchemaRegistryApi("http://ecsc00104a5d.epam.com:8081/"))
+            using (var registry = TestsConfig.GetRegistryApi())
             {
                 var subjects = registry.GetAllSubjects();
                 Console.WriteLine(subjects.ToJson());
@@ -27,8 +29,6 @@ namespace SchemaRegistry.ConsoleTool
 
                 var schemaVersionLatest = registry.GetLatestSchemaMetadata(subjects[0]);
                 Console.WriteLine(schemaVersionLatest.ToJson());
-
-
             }
         }
     }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SchemaRegistry
 {
-    public class SchemaRegistryApi: IDisposable
+    public class SchemaRegistryApi : IDisposable, ISchemaRegistryApi
     {
         private string _registryUrl;
         private WebClient _client;
