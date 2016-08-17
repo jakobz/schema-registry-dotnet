@@ -6,7 +6,7 @@ namespace SchemaRegistry
 {
     public interface ISchemaRegistryApi: IDisposable
     {
-        ExistingSchemaResponse CheckIfSchemaRegistered(string subject);
+        ExistingSchemaResponse CheckIfSchemaRegistered(string subject, string schema);
         TResponse Get<TResponse>(string path);
         string[] GetAllSubjects();
         SchemaContainer GetById(int id);

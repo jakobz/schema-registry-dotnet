@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Hadoop.Avro, Version=1.5.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Hadoop.Avro.1.5.6\lib\net45\Microsoft.Hadoop.Avro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -45,10 +49,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ISchemaRegistryApi.cs" />
+    <Compile Include="KafkaAvroSerializer.cs" />
     <Compile Include="Messages\CompatibilityFlagResponse.cs" />
     <Compile Include="Messages\CompatibilityLevel.cs" />
     <Compile Include="Messages\CompatibilityObject.cs" />
     <Compile Include="Messages\ExistingSchemaResponse.cs" />
+    <Compile Include="Messages\IdContainer.cs" />
     <Compile Include="Messages\SchemaContainer.cs" />
     <Compile Include="Messages\SchemaMetadata.cs" />
     <Compile Include="Messages\SchemaRegistryError.cs" />
@@ -59,6 +65,7 @@
     <Compile Include="Utils\JsonUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

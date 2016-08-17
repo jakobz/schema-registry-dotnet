@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace SchemaRegistry.Messages
 {
-    public enum CompatibilityLevel
+    public class IdContainer
     {
-        None,
-        Full,
-        Forward,
-        Backward
+        public int Id { get; set; }
     }
 }

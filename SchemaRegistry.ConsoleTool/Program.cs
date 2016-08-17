@@ -13,22 +13,8 @@ namespace SchemaRegistry.ConsoleTool
         {
             using (var registry = new SchemaRegistryApi("http://ecsc00104a5d.epam.com:8081/"))
             {
-                var subjects = registry.GetAllSubjects();
-                Console.WriteLine(subjects.ToJson());
-
-                var versions = registry.GetSchemaVersions(subjects[0]);
-                Console.WriteLine(versions.ToJson());
-
-                var schema = registry.GetById(versions[0]);
-                Console.WriteLine(schema.Schema);
-
-                var schemaVersionSpecific = registry.GetBySubjectAndId(subjects[0], versions[0]);
-                Console.WriteLine(schemaVersionSpecific.ToJson());
-
-                var schemaVersionLatest = registry.GetLatestSchemaMetadata(subjects[0]);
-                Console.WriteLine(schemaVersionLatest.ToJson());
-
-
+                var schema = registry.GetLatestSchemaMetadata("test_avro_X1").Schema;
+                Console.WriteLine(schema.ToJson());
             }
         }
     }

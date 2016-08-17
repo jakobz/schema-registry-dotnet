@@ -44,11 +44,11 @@ namespace SchemaRegistry
             try {
                 if (method == HttpMethod.Get)
                 {
-                    responseString = _client.UploadString(url, method.Method, payload != null ? JsonUtils.ToJson(payload) : "");
+                    responseString = _client.DownloadString(url);
                 }
                 else
                 {
-                    responseString = _client.DownloadString(url);
+                    responseString = _client.UploadString(url, method.Method, payload != null ? JsonUtils.ToJson(payload) : "");
                 }
 
                 return JsonUtils.FromJson<TResponse>(responseString);
@@ -76,7 +76,7 @@ namespace SchemaRegistry
         /// <returns>JSON-parsed response object</returns>
         public TResponse Get<TResponse>(string path)
         {
-            return RunRequest<TResponse, string>(path, null, null);
+            return RunRequest<TResponse, string>(path, HttpMethod.Get, null);
         }
 
 
@@ -158,16 +158,16 @@ namespace SchemaRegistry
         /// <param name="schema">The Avro schema string</param>
         public int Register(string subject, string schema)
         {
-            return RunRequest<int, SchemaContainer>($"/subjects/{subject}/versions", HttpMethod.Post, new SchemaContainer { Schema = schema });
+            return RunRequest<IdContainer, SchemaContainer>($"/subjects/{subject}/versions", HttpMethod.Post, new SchemaContainer { Schema = schema }).Id;
         }
 
         /// <summary>
         /// Check if a schema has already been registered under the specified subject. If so, this returns the schema string along with its globally unique identifier, its version under this subject and the subject name.
         /// </summary>
         /// <param name="subject">Subject under which the schema will be registered</param>
-        public ExistingSchemaResponse CheckIfSchemaRegistered(string subject)
+        public ExistingSchemaResponse CheckIfSchemaRegistered(string subject, string schema)
         {
-            return RunRequest<ExistingSchemaResponse, string>($"/subjects/{subject}", HttpMethod.Post, "");
+            return RunRequest<ExistingSchemaResponse, SchemaContainer>($"/subjects/{subject}", HttpMethod.Post, new SchemaContainer { Schema = schema });
         }
 
         /// <summary>
