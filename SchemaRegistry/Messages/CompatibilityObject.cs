@@ -9,9 +9,15 @@ namespace SchemaRegistry.Messages
     public class CompatibilityObject
     {
         public string Compatibility { get; set; }
+
+        // For some reason, get requests return "compatibilityLevel", while PUT requests accepts and returns "compatibility" field
+        public string CompatibilityLevel {
+            set { Compatibility = value; } 
+        }
+
         public static CompatibilityObject Create(CompatibilityLevel level)
         {
-            if (level == CompatibilityLevel.NotSet)
+            if (level == Messages.CompatibilityLevel.NotSet)
             {
                 return new CompatibilityObject
                 {

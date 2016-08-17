@@ -41,7 +41,8 @@ namespace SchemaRegistry
             string url = _registryUrl + path;
             string responseString = null;
 
-            try {
+            try
+            {
                 if (method == HttpMethod.Get)
                 {
                     responseString = _client.DownloadString(url);

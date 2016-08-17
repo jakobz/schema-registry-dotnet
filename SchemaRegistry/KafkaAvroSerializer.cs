@@ -8,6 +8,7 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace SchemaRegistry
 {
@@ -46,7 +47,7 @@ namespace SchemaRegistry
 
             var serializer = (IAvroSerializer<T>)_deserializersCache.GetOrAdd(schemaId, _ =>
             {
-                var writerSchema = _registryApi.GetBySubjectAndId(_subject, schemaId).Schema;
+                var writerSchema = _registryApi.GetById(schemaId).Schema;
                 var newSerializer = AvroSerializer.CreateDeserializerOnly<T>(writerSchema, new AvroSerializerSettings());
                 return newSerializer;
             });
@@ -66,7 +67,17 @@ namespace SchemaRegistry
             var isAndSerializer = _serializersCache.GetOrAdd(typeof(T), type =>
             {
                 var newSerializer = AvroSerializer.Create<T>(new AvroSerializerSettings { GenerateDeserializer = false });
-                var newSchemaId = _registryApi.Register(_subject, newSerializer.WriterSchema.ToString());
+
+                string hardcodedSchema = null;
+                var field = typeof(T).GetField("_SCHEMA", BindingFlags.Public | BindingFlags.Static);
+                if (field != null)
+                {
+                    hardcodedSchema = (string)field.GetValue(null);
+                }
+
+                var schema = hardcodedSchema ?? newSerializer.WriterSchema.ToString();
+
+                var newSchemaId = _registryApi.Register(_subject, schema);
                 return Tuple.Create(newSchemaId, (object)newSerializer);
             });
 
