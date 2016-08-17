@@ -11,7 +11,18 @@ namespace SchemaRegistry.Messages
         public string Compatibility { get; set; }
         public static CompatibilityObject Create(CompatibilityLevel level)
         {
-            return new CompatibilityObject { Compatibility = Enum.GetName(typeof(CompatibilityLevel), level).ToUpperInvariant() };
+            if (level == CompatibilityLevel.NotSet)
+            {
+                return new CompatibilityObject
+                {
+                    Compatibility = null
+                };
+            }
+
+            return new CompatibilityObject
+            {
+                Compatibility = Enum.GetName(typeof(CompatibilityLevel), level).ToUpperInvariant()
+            };
         }
     }
 }

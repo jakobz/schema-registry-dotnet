@@ -239,6 +239,11 @@ namespace SchemaRegistry
 
         private static CompatibilityLevel ParseCompatibilityEnum(CompatibilityObject compatibilityObject)
         {
+            if (compatibilityObject == null || compatibilityObject.Compatibility == null)
+            {
+                return CompatibilityLevel.NotSet;
+            }
+
             return (CompatibilityLevel)Enum.Parse(typeof(CompatibilityLevel), compatibilityObject.Compatibility, true);
         }
 

@@ -9,7 +9,7 @@ using SchemaRegistry.Messages;
 namespace SchemaRegistry.Tests
 {
     public class MockSchemaRegistry : ISchemaRegistryApi
-    {
+    {        
         public ExistingSchemaResponse CheckIfSchemaRegistered(string subject, string schema)
         {
             throw new NotImplementedException();
@@ -39,7 +39,7 @@ namespace SchemaRegistry.Tests
         {
             return new SchemaMetadata
             {
-                Schema = @"{""type"":""record"",""name"":""example.avro.User"",""fields"":[{""name"":""name"",""type"":""string""},{""name"":""favorite_number"",""type"":[""int"",""null""]},{""name"":""favorite_color"",""type"":[""string"",""null""]}]}",
+                Schema = @"{""type"":""record"",""name"":""example.avro.User"",""fields"":[{""name"":""name"",""type"":""string""},{""name"":""favorite_number"",""type"":[""null"", ""int""]},{""name"":""favorite_color"",""type"":[""null"", ""string""]}]}",
                 Subject = subject,
                 Version = 1
             };
@@ -82,7 +82,7 @@ namespace SchemaRegistry.Tests
 
         public int Register(string subject, string schema)
         {
-            throw new NotImplementedException();
+            return 3;
         }
 
         public TResponse RunRequest<TResponse, TRequest>(string path, HttpMethod method, TRequest payload)

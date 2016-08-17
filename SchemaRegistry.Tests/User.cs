@@ -34,13 +34,15 @@ namespace example.avro
         /// <summary>
         /// Gets or sets the favorite_number field.
         /// </summary>
-        [DataMember]
+        [DataMember()]
+        [NullableSchema]
         public Nullable<int> favorite_number { get; set; }
 
         /// <summary>
         /// Gets or sets the favorite_color field.
         /// </summary>
-        [DataMember]
+        [DataMember()]
+        [NullableSchema]
         public string favorite_color { get; set; }
 
         /// <summary>
