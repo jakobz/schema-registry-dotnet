@@ -1,24 +1,27 @@
-﻿using Microsoft.Hadoop.Avro;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using Avro;
+using Avro.Generic;
+using Avro.Specific;
+using Avro.IO;
 
 namespace SchemaRegistry
 {
-    public class KafkaAvroSerializer<T>
+    public class KafkaAvroSerializer<T> where T : ISpecificRecord, new()
     {
         private const byte MagicByte = 0;
         private string _topic;
         private ISchemaRegistryApi _registryApi;
         private bool _isKey;
         private string _subject;
+        private Schema _schema;
 
         // caches
         private static ConcurrentDictionary<int, object> _deserializersCache
@@ -33,6 +36,8 @@ namespace SchemaRegistry
             _registryApi = registryApi;
             _isKey = isKey;
             _subject = topic + (isKey ? "-key" : "-value");
+
+            _schema = (Schema)typeof(T).GetField("_SCHEMA", BindingFlags.Public | BindingFlags.Static).GetValue(null);
         }
 
         public T Deserialize(BinaryReader reader)
@@ -45,14 +50,17 @@ namespace SchemaRegistry
 
             var schemaId = IPAddress.NetworkToHostOrder(reader.ReadInt32());
 
-            var serializer = (IAvroSerializer<T>)_deserializersCache.GetOrAdd(schemaId, _ =>
+            var serializer = (SpecificReader<T>)_deserializersCache.GetOrAdd(schemaId, _ =>
             {
-                var writerSchema = _registryApi.GetById(schemaId).Schema;
-                var newSerializer = AvroSerializer.CreateDeserializerOnly<T>(writerSchema, new AvroSerializerSettings());
-                return newSerializer;
+                var writerSchemaJson = _registryApi.GetById(schemaId).Schema;
+                var writerSchema = Schema.Parse(writerSchemaJson);
+                var avroReader = new SpecificReader<T>(writerSchema, _schema);
+                return avroReader;
             });
 
-            var result = serializer.Deserialize(reader.BaseStream);
+            var result = default(T);
+            var decoder = new BinaryDecoder(reader.BaseStream);
+            result = serializer.Read(result, decoder);
 
             return result;
         }
@@ -64,28 +72,19 @@ namespace SchemaRegistry
 
         public void Serialize(T obj, BinaryWriter writer)
         {
-            var isAndSerializer = _serializersCache.GetOrAdd(typeof(T), type =>
+            var idAndSerializer = _serializersCache.GetOrAdd(typeof(T), type =>
             {
-                var newSerializer = AvroSerializer.Create<T>(new AvroSerializerSettings { GenerateDeserializer = false });
-
-                string hardcodedSchema = null;
-                var field = typeof(T).GetField("_SCHEMA", BindingFlags.Public | BindingFlags.Static);
-                if (field != null)
-                {
-                    hardcodedSchema = (string)field.GetValue(null);
-                }
-
-                var schema = hardcodedSchema ?? newSerializer.WriterSchema.ToString();
-
-                var newSchemaId = _registryApi.Register(_subject, schema);
-                return Tuple.Create(newSchemaId, (object)newSerializer);
+                var newSchemaId = _registryApi.Register(_subject, _schema.ToString());
+                var avroWriter = new SpecificWriter<T>(_schema);
+                return Tuple.Create(newSchemaId, (object)avroWriter);
             });
 
-            var schemaId = isAndSerializer.Item1;
-            var serializer = (IAvroSerializer<T>)isAndSerializer.Item2;
+            var schemaId = idAndSerializer.Item1;
+            var serializer = (SpecificWriter<T>)idAndSerializer.Item2;
             writer.Write(MagicByte);
             writer.Write(IPAddress.HostToNetworkOrder(schemaId));
-            serializer.Serialize(writer.BaseStream, obj);
+            var encoder = new BinaryEncoder(writer.BaseStream);
+            serializer.Write(obj, encoder);
         }
 
         public byte[] SerializeToBytesArray(T obj)
