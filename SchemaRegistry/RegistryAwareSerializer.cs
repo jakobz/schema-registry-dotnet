@@ -9,16 +9,18 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using SchemaRegistry.Serialization;
 
 namespace SchemaRegistry
 {
-    public class KafkaAvroSerializer<T>
+    public class RegistryAwareSerializer<T>
     {
         private const byte MagicByte = 0;
         private string _topic;
         private ISchemaRegistryApi _registryApi;
         private bool _isKey;
         private string _subject;
+        private ISerializerFactory<T> _serializerFactory;
 
         // caches
         private static ConcurrentDictionary<int, object> _deserializersCache
@@ -27,7 +29,7 @@ namespace SchemaRegistry
         private static ConcurrentDictionary<Type, Tuple<int, object>> _serializersCache 
             = new ConcurrentDictionary<Type, Tuple<int, object>>();
 
-        public KafkaAvroSerializer(string topic, ISchemaRegistryApi registryApi, bool isKey = false)
+        public RegistryAwareSerializer(string topic, ISchemaRegistryApi registryApi, ISerializerFactory<T> serializerFactory, bool isKey = false)
         {
             _topic = topic;
             _registryApi = registryApi;
@@ -48,7 +50,7 @@ namespace SchemaRegistry
             var serializer = (IAvroSerializer<T>)_deserializersCache.GetOrAdd(schemaId, _ =>
             {
                 var writerSchema = _registryApi.GetById(schemaId).Schema;
-                var newSerializer = AvroSerializer.CreateDeserializerOnly<T>(writerSchema, new AvroSerializerSettings());
+                var newSerializer = _serializerFactory.BuildDeserializer(writerSchema);
                 return newSerializer;
             });
 
@@ -66,17 +68,8 @@ namespace SchemaRegistry
         {
             var isAndSerializer = _serializersCache.GetOrAdd(typeof(T), type =>
             {
-                var newSerializer = AvroSerializer.Create<T>(new AvroSerializerSettings { GenerateDeserializer = false });
-
-                string hardcodedSchema = null;
-                var field = typeof(T).GetField("_SCHEMA", BindingFlags.Public | BindingFlags.Static);
-                if (field != null)
-                {
-                    hardcodedSchema = (string)field.GetValue(null);
-                }
-
-                var schema = hardcodedSchema ?? newSerializer.WriterSchema.ToString();
-
+                var newSerializer = _serializerFactory.BuildSerializer();
+                var schema = _serializerFactory.GetSchema();
                 var newSchemaId = _registryApi.Register(_subject, schema);
                 return Tuple.Create(newSchemaId, (object)newSerializer);
             });

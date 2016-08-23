@@ -26,7 +26,7 @@ namespace SchemaRegistry.Tests
         [Test]
         public void CanDeserialize()
         {
-            var serializer = new KafkaAvroSerializer<example.avro.User>("test_topic", new MockSchemaRegistry(), false);
+            var serializer = new RegistryAwareSerializer<example.avro.User>("test_topic", new MockSchemaRegistry(), false);
             var ms = new MemoryStream();
             ms.Write(TestMessage, 0, TestMessage.Length);
             ms.Position = 0;
@@ -39,7 +39,7 @@ namespace SchemaRegistry.Tests
         [Test]
         public void CanSerializeAndDeserializeBack()
         {
-            var serializer = new KafkaAvroSerializer<example.avro.User>("test_topic", new MockSchemaRegistry(), false);
+            var serializer = new RegistryAwareSerializer<example.avro.User>("test_topic", new MockSchemaRegistry(), false);
 
             var ms = new MemoryStream();
             
@@ -62,7 +62,7 @@ namespace SchemaRegistry.Tests
         [Test]
         public void CanSerialize()
         {
-            var serializer = new KafkaAvroSerializer<example.avro.User>("test_topic", new MockSchemaRegistry(), false);
+            var serializer = new RegistryAwareSerializer<example.avro.User>("test_topic", new MockSchemaRegistry(), false);
 
             var ms = new MemoryStream();
 
