@@ -86,7 +86,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>$(ProjectDir)..\SchemaRegistry.ConsoleTool\bin\Debug\SchemaRegistry.ConsoleTool.exe Generate /rootPath=$(ProjectDir)</PreBuildEvent>
+    <PreBuildEvent>$(ProjectDir)..\SchemaRegistry.ConsoleTool\bin\$(ConfigurationName)\SchemaRegistry.ConsoleTool.exe Generate /rootPath=$(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
