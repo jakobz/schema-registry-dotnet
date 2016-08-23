@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>SchemaRegistryDotNet</id>
+    <version>$version$</version>
+    <authors>Yakov Zhmurov</authors>
+    <licenseUrl>https://github.com/jakobz/schema-registry-dotnet/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/jakobz/schema-registry-dotnet</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>.Net wrapper for the Confluent Schema Registry REST API</description>
+    <tags>schemaregistry avro kafka confluent</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5.2">
+        <dependency id="Newtonsoft.Json" version="9.0.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="SchemaRegistry\bin\Release\SchemaRegistry.dll" target="lib\net452\SchemaRegistry.dll" />
+  </files>
+</package>
