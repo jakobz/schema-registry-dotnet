@@ -19,9 +19,10 @@ before_build:
 build:
   project: SchemaRegistry.sln
 
+after_build:
+  - nuget pack SchemaRegistry.nuspec
+
 artifacts:
-  - path: MarkdownLog\bin\Release\MarkdownLog.dll
-    name: MarkdownLog.dll
   - path: '*.nupkg'
 
 deploy:
