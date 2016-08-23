@@ -57,13 +57,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generated\example\avro\User.cs" />
     <Compile Include="KafkaSerializerTests.cs" />
     <Compile Include="MockSchemaRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchemaRegistryApiTests.cs" />
-    <Compile Include="Serialization\MsSerializerFactory.cs" />
     <Compile Include="TestsConfig.cs" />
-    <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -83,9 +82,7 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Generated\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>$(ProjectDir)..\SchemaRegistry.ConsoleTool\bin\Debug\SchemaRegistry.ConsoleTool.exe Generate /rootPath=$(ProjectDir)</PreBuildEvent>

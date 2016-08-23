@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using SchemaRegistry.Messages;
+using example.avro;
 
 namespace SchemaRegistry.Tests
 {
@@ -32,14 +33,17 @@ namespace SchemaRegistry.Tests
 
         public SchemaContainer GetById(int id)
         {
-            throw new NotImplementedException();
+            return new SchemaContainer
+            {
+                Schema = User._SCHEMA.ToString()
+            };
         }
 
         public SchemaMetadata GetBySubjectAndId(string subject, int versionId)
         {
             return new SchemaMetadata
             {
-                Schema = @"{""type"":""record"",""name"":""example.avro.User"",""fields"":[{""name"":""name"",""type"":""string""},{""name"":""favorite_number"",""type"":[""null"", ""int""]},{""name"":""favorite_color"",""type"":[""null"", ""string""]}]}",
+                Schema = User._SCHEMA.ToString(),
                 Subject = subject,
                 Version = 1
             };
