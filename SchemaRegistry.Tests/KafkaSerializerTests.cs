@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using com.example.tests;
+using NUnit.Framework;
+using SchemaRegistry.Tests.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,17 +18,23 @@ namespace SchemaRegistry.Tests
             49, 51, 49, 51, 52, 52, 53, 55, 2, 242, 201, 187, 135, 6, 2, 28, 67, 111,
             108, 111, 114, 56, 49, 51, 49, 51, 52, 52, 53, 55 };
 
-        example.avro.User TestUser = new example.avro.User
+        User TestUser = new User
         {
             name = "Name813134457",
             favorite_color = "Color813134457",
             favorite_number = 813134457
         };
 
+        public RegistryAwareSerializer<User> GetSerializer()
+        {
+            var avroSerializerFactory = new AvroSerializerFactory<User>();
+            return new RegistryAwareSerializer<User>("test_topic", new MockSchemaRegistry(), avroSerializerFactory, false);
+        }
+
         [Test]
         public void CanDeserialize()
         {
-            var serializer = new RegistryAwareSerializer<example.avro.User>("test_topic", new MockSchemaRegistry(), false);
+            var serializer = GetSerializer();
             var ms = new MemoryStream();
             ms.Write(TestMessage, 0, TestMessage.Length);
             ms.Position = 0;
@@ -39,7 +47,7 @@ namespace SchemaRegistry.Tests
         [Test]
         public void CanSerializeAndDeserializeBack()
         {
-            var serializer = new RegistryAwareSerializer<example.avro.User>("test_topic", new MockSchemaRegistry(), false);
+            var serializer = GetSerializer();
 
             var ms = new MemoryStream();
             
@@ -62,7 +70,7 @@ namespace SchemaRegistry.Tests
         [Test]
         public void CanSerialize()
         {
-            var serializer = new RegistryAwareSerializer<example.avro.User>("test_topic", new MockSchemaRegistry(), false);
+            var serializer = GetSerializer();
 
             var ms = new MemoryStream();
 

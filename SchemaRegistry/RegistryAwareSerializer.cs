@@ -1,5 +1,4 @@
-﻿using Microsoft.Hadoop.Avro;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.IO;
@@ -9,7 +8,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-using SchemaRegistry.Serialization;
 
 namespace SchemaRegistry
 {
@@ -33,6 +31,7 @@ namespace SchemaRegistry
         {
             _topic = topic;
             _registryApi = registryApi;
+            _serializerFactory = serializerFactory;
             _isKey = isKey;
             _subject = topic + (isKey ? "-key" : "-value");
         }
@@ -47,14 +46,14 @@ namespace SchemaRegistry
 
             var schemaId = IPAddress.NetworkToHostOrder(reader.ReadInt32());
 
-            var serializer = (IAvroSerializer<T>)_deserializersCache.GetOrAdd(schemaId, _ =>
+            var deserializer = (Func<Stream, T>)_deserializersCache.GetOrAdd(schemaId, _ =>
             {
                 var writerSchema = _registryApi.GetById(schemaId).Schema;
                 var newSerializer = _serializerFactory.BuildDeserializer(writerSchema);
                 return newSerializer;
             });
 
-            var result = serializer.Deserialize(reader.BaseStream);
+            var result = deserializer(reader.BaseStream);
 
             return result;
         }
@@ -75,10 +74,10 @@ namespace SchemaRegistry
             });
 
             var schemaId = isAndSerializer.Item1;
-            var serializer = (IAvroSerializer<T>)isAndSerializer.Item2;
+            var serializer = (Action<Stream, T>)isAndSerializer.Item2;
             writer.Write(MagicByte);
             writer.Write(IPAddress.HostToNetworkOrder(schemaId));
-            serializer.Serialize(writer.BaseStream, obj);
+            serializer(writer.BaseStream, obj);
         }
 
         public byte[] SerializeToBytesArray(T obj)

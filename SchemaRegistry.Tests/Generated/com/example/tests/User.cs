@@ -5,7 +5,7 @@
 //    is regenerated
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace example.avro
+namespace com.example.tests
 {
 	using System;
 	using System.Collections.Generic;
@@ -15,9 +15,9 @@ namespace example.avro
 	
 	public partial class User : ISpecificRecord
 	{
-		public static Schema _SCHEMA = Avro.Schema.Parse("{\"type\":\"record\",\"name\":\"User\",\"namespace\":\"example.avro\",\"fields\":[{\"name\":\"name" +
-				"\",\"type\":\"string\"},{\"name\":\"favorite_number\",\"type\":[\"null\",\"int\"]},{\"name\":\"fav" +
-				"orite_color\",\"type\":[\"null\",\"string\"]}]}");
+		public static Schema _SCHEMA = Avro.Schema.Parse("{\"type\":\"record\",\"name\":\"User\",\"namespace\":\"com.example.tests\",\"fields\":[{\"name\":" +
+				"\"name\",\"type\":\"string\"},{\"name\":\"favorite_number\",\"type\":[\"null\",\"int\"]},{\"name\"" +
+				":\"favorite_color\",\"type\":[\"null\",\"string\"]}]}");
 		private string _name;
 		private System.Nullable<int> _favorite_number;
 		private string _favorite_color;

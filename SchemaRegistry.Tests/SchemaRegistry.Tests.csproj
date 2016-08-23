@@ -57,11 +57,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Generated\example\avro\User.cs" />
+    <Compile Include="Generated\com\example\tests\User.cs" />
     <Compile Include="KafkaSerializerTests.cs" />
     <Compile Include="MockSchemaRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchemaRegistryApiTests.cs" />
+    <Compile Include="Serialization\AvroSerializerFactory.cs" />
     <Compile Include="TestsConfig.cs" />
   </ItemGroup>
   <ItemGroup>

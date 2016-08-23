@@ -11,6 +11,7 @@ using SchemaRegistry.Messages;
 namespace SchemaRegistry.Tests
 {
     [TestFixture]
+    [Ignore("Integration tests")]
     public class SchemaRegistryApiTests
     {
         [Test]

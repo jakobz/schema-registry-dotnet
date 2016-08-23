@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using SchemaRegistry.Messages;
-using example.avro;
+using com.example.tests;
 
 namespace SchemaRegistry.Tests
 {

@@ -1,4 +1,4 @@
-{"namespace": "example.avro",
+{"namespace": "com.example.tests",
  "type": "record",
  "name": "User",
  "fields": [

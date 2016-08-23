@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchemaRegistry.Serialization
+namespace SchemaRegistry
 {
     public interface ISerializerFactory<T>
     {
-        ISerializer<T> BuildSerializer();
-        IDeserializer<T> BuildDeserializer(string writerSchema);
+        Action<Stream, T> BuildSerializer();
+        Func<Stream, T> BuildDeserializer(string writerSchema);
         string GetSchema();
     }
 }

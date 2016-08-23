@@ -30,10 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Avro, Version=0.9.0.0, Culture=neutral, PublicKeyToken=b1248d7eeb9d0814, processorArchitecture=MSIL">
-      <HintPath>..\packages\Apache.Avro.1.7.7.2\lib\Avro.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
       <Private>True</Private>
@@ -52,9 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Serialization\IDeserializer.cs" />
     <Compile Include="ISchemaRegistryApi.cs" />
-    <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="RegistryAwareSerializer.cs" />
     <Compile Include="Messages\CompatibilityFlagResponse.cs" />
     <Compile Include="Messages\CompatibilityLevel.cs" />
@@ -68,7 +62,7 @@
     <Compile Include="Messages\SchemaRegistryException.cs" />
     <Compile Include="SchemaRegistryApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serialization\ISerializerFactory.cs" />
+    <Compile Include="ISerializerFactory.cs" />
     <Compile Include="Utils\JsonUtils.cs" />
   </ItemGroup>
   <ItemGroup>
