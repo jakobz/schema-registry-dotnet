@@ -35,8 +35,9 @@ namespace SchemaRegistry
             if (_client == null)
             {
                 _client = new WebClient();
-                _client.Headers.Add("Accept", "application/vnd.schemaregistry.v1+json");
             }
+
+            _client.Headers.Add("Accept", "application/vnd.schemaregistry.v1+json, application/vnd.schemaregistry+json, application/json");
 
             string url = _registryUrl + path;
             string responseString = null;
@@ -49,7 +50,15 @@ namespace SchemaRegistry
                 }
                 else
                 {
-                    responseString = _client.UploadString(url, method.Method, payload != null ? JsonUtils.ToJson(payload) : "");
+                    string payloadString = "";
+
+                    if (payload != null)
+                    {
+                        payloadString = JsonUtils.ToJson(payload);
+                        _client.Headers.Add("Content-Type", "application/json");
+                    }
+
+                    responseString = _client.UploadString(url, method.Method, payloadString);
                 }
 
                 return JsonUtils.FromJson<TResponse>(responseString);
