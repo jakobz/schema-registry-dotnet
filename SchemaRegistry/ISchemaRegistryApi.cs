@@ -15,7 +15,6 @@ namespace SchemaRegistry
         SchemaMetadata GetLatestSchemaMetadata(string subject);
         int[] GetSchemaVersions(string subject);
         CompatibilityLevel GetSubjectConfig(string subject);
-        TResponse Post<TResponse>(string path);
         CompatibilityLevel PutGlobalConfig(CompatibilityLevel level);
         CompatibilityLevel PutSubjectConfig(string subject, CompatibilityLevel level);
         int Register(string subject, string schema);

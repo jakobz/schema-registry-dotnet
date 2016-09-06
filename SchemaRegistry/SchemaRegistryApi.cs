@@ -13,7 +13,6 @@ namespace SchemaRegistry
     public class SchemaRegistryApi : IDisposable, ISchemaRegistryApi
     {
         private string _registryUrl;
-        private WebClient _client;
 
         public SchemaRegistryApi(string url)
         {
@@ -32,49 +31,47 @@ namespace SchemaRegistry
         /// <returns>JSON-parsed response object</returns>
         public TResponse RunRequest<TResponse, TRequest>(string path, HttpMethod method, TRequest payload)
         {
-            if (_client == null)
+            using (var webClient = new WebClient())
             {
-                _client = new WebClient();
-            }
+                webClient.Headers.Add("Accept", "application/vnd.schemaregistry.v1+json, application/vnd.schemaregistry+json, application/json");
 
-            _client.Headers.Add("Accept", "application/vnd.schemaregistry.v1+json, application/vnd.schemaregistry+json, application/json");
+                string url = _registryUrl + path;
+                string responseString = null;
 
-            string url = _registryUrl + path;
-            string responseString = null;
-
-            try
-            {
-                if (method == HttpMethod.Get)
-                {
-                    responseString = _client.DownloadString(url);
-                }
-                else
-                {
-                    string payloadString = "";
-
-                    if (payload != null)
-                    {
-                        payloadString = JsonUtils.ToJson(payload);
-                        _client.Headers.Add("Content-Type", "application/json");
-                    }
-
-                    responseString = _client.UploadString(url, method.Method, payloadString);
-                }
-
-                return JsonUtils.FromJson<TResponse>(responseString);
-            }
-            catch(WebException webException)
-            {
-                SchemaRegistryError error = null;
                 try
                 {
-                    error = JsonUtils.FromJson<SchemaRegistryError>(responseString);
-                }
-                catch
-                {
-                }
+                    if (method == HttpMethod.Get)
+                    {
+                        responseString = webClient.DownloadString(url);
+                    }
+                    else
+                    {
+                        string payloadString = "";
 
-                throw new SchemaRegistryException(error, webException);
+                        if (payload != null)
+                        {
+                            payloadString = JsonUtils.ToJson(payload);
+                            webClient.Headers.Add("Content-Type", "application/json");
+                        }
+
+                        responseString = webClient.UploadString(url, method.Method, payloadString);
+                    }
+
+                    return JsonUtils.FromJson<TResponse>(responseString);
+                }
+                catch (WebException webException)
+                {
+                    SchemaRegistryError error = null;
+                    try
+                    {
+                        error = JsonUtils.FromJson<SchemaRegistryError>(responseString);
+                    }
+                    catch
+                    {
+                    }
+
+                    throw new SchemaRegistryException(error, webException);
+                }
             }
         }
 
@@ -88,20 +85,6 @@ namespace SchemaRegistry
         {
             return RunRequest<TResponse, string>(path, HttpMethod.Get, null);
         }
-
-
-        /// <summary>
-        /// Execute API POST request
-        /// </summary>
-        /// <typeparam name="TResponse">Response type to be parsed as JSON</typeparam>
-        /// <param name="path">Relative API path</param>
-        /// <returns>JSON-parsed response object</returns>
-        public TResponse Post<TResponse>(string path)
-        {
-            var response = _client.DownloadString(_registryUrl + path);
-            return JsonUtils.FromJson<TResponse>(response);
-        }
-
 
 
         // API Endpoints, as listed at http://docs.confluent.io/1.0.1/schema-registry/docs/api.html
@@ -269,7 +252,6 @@ namespace SchemaRegistry
             {
                 if (disposing)
                 {
-                    _client.Dispose();
                 }
 
                 disposedValue = true;
