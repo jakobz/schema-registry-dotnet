@@ -20,7 +20,7 @@ build:
   project: SchemaRegistry.sln
 
 after_build:
-  - nuget pack SchemaRegistry.nuspec -Prop version={version}
+  - nuget pack SchemaRegistry.nuspec -Prop version=%APPVEYOR_BUILD_VERSION%
 
 artifacts:
   - path: '*.nupkg'
