@@ -19,8 +19,8 @@ before_build:
 build:
   project: SchemaRegistry.sln
 
-#after_build:
-#  - nuget pack SchemaRegistry.nuspec
+after_build:
+  - nuget pack SchemaRegistry\SchemaRegistry.nuspec
 
 artifacts:
   - path: '*.nupkg'
