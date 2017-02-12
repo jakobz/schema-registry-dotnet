@@ -48,7 +48,7 @@ namespace SchemaRegistry
 
             var deserializer = (Func<Stream, T>)_deserializersCache.GetOrAdd(schemaId, _ =>
             {
-                var writerSchema = _registryApi.GetById(schemaId).Schema;
+                var writerSchema = _registryApi.GetById(schemaId).Result.Schema;
                 var newSerializer = _serializerFactory.BuildDeserializer(writerSchema);
                 return newSerializer;
             });
@@ -69,7 +69,7 @@ namespace SchemaRegistry
             {
                 var newSerializer = _serializerFactory.BuildSerializer();
                 var schema = _serializerFactory.GetSchema();
-                var newSchemaId = _registryApi.Register(_subject, schema);
+                var newSchemaId = _registryApi.Register(_subject, schema).Result;
                 return Tuple.Create(newSchemaId, (object)newSerializer);
             });
 

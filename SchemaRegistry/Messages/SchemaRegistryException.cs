@@ -11,7 +11,8 @@ namespace SchemaRegistry.Messages
     {
         public SchemaRegistryErrorCode ErrorCode { get; set; }
 
-        public SchemaRegistryException(SchemaRegistryError error, WebException webException): base(error?.Message ?? webException.Message, webException)
+        public SchemaRegistryException(string url, HttpStatusCode status, SchemaRegistryError error)
+            : base($"Schema registry returned error. Status: {status}.{(error == null ? "" : $" Error: {error.Message}")} Url: {url}")
         {
             if (error != null)
             {

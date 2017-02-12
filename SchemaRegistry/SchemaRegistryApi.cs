@@ -21,45 +21,27 @@ namespace SchemaRegistry
 
         // Generic API wrappers
 
-        /// <summary>
-        /// Execute API request
-        /// </summary>
-        /// <typeparam name="TResponse">Response type to be parsed as JSON</typeparam>
-        /// <param name="path">Relative API path</param>
-        /// <param name="method">HTTP Method</param>
-        /// <param name="payload">Object to pass as JSON to POST/PUT request</param>
-        /// <returns>JSON-parsed response object</returns>
-        public TResponse RunRequest<TResponse, TRequest>(string path, HttpMethod method, TRequest payload)
+        public async Task<TResponse> RunRequest<TResponse, TRequest>(string path, HttpMethod method, TRequest payload)
         {
-            using (var webClient = new WebClient())
+            using (var httpClient = new HttpClient())
             {
-                webClient.Headers.Add("Accept", "application/vnd.schemaregistry.v1+json, application/vnd.schemaregistry+json, application/json");
+                HttpRequestMessage request = new HttpRequestMessage();
+                request.Headers.Add("Accept", "application/vnd.schemaregistry.v1+json, application/vnd.schemaregistry+json, application/json");
+                request.Method = method;
+                var url = _registryUrl + path;
+                request.RequestUri = new Uri(url);
 
-                string url = _registryUrl + path;
-                string responseString = null;
-
-                try
+                if (payload != null)
                 {
-                    if (method == HttpMethod.Get)
-                    {
-                        responseString = webClient.DownloadString(url);
-                    }
-                    else
-                    {
-                        string payloadString = "";
-
-                        if (payload != null)
-                        {
-                            payloadString = JsonUtils.ToJson(payload);
-                            webClient.Headers.Add("Content-Type", "application/json");
-                        }
-
-                        responseString = webClient.UploadString(url, method.Method, payloadString);
-                    }
-
-                    return JsonUtils.FromJson<TResponse>(responseString);
+                    var payloadString = JsonUtils.ToJson(payload);
+                    request.Headers.Add("Content-Type", "application/json");
+                    request.Content = new StringContent(payloadString, Encoding.UTF8);
                 }
-                catch (WebException webException)
+
+                var response = await httpClient.SendAsync(request);
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode != HttpStatusCode.OK)
                 {
                     SchemaRegistryError error = null;
                     try
@@ -70,18 +52,15 @@ namespace SchemaRegistry
                     {
                     }
 
-                    throw new SchemaRegistryException(error, webException);
+                    throw new SchemaRegistryException(url, response.StatusCode, error);
                 }
+
+                return JsonUtils.FromJson<TResponse>(responseString);
             }
         }
 
-        /// <summary>
-        /// Execute API GET request
-        /// </summary>
-        /// <typeparam name="TResponse">Response type to be parsed as JSON</typeparam>
-        /// <param name="path">Relative API path</param>
-        /// <returns>JSON-parsed response object</returns>
-        public TResponse Get<TResponse>(string path)
+
+        public Task<TResponse> Get<TResponse>(string path)
         {
             return RunRequest<TResponse, string>(path, HttpMethod.Get, null);
         }
@@ -90,140 +69,85 @@ namespace SchemaRegistry
         // API Endpoints, as listed at http://docs.confluent.io/1.0.1/schema-registry/docs/api.html
 
 
-        /// <summary>
-        /// Get the schema string identified by the input id.
-        /// </summary>
-        /// <param name="id">id (int) – the globally unique identifier of the schema</param>
-        /// <returns>Response Object:
-        /// - schema(string) – Schema string identified by the id
-        /// </returns>
-        /// <exception cref="Exception">Test 123</exception>        
-        public SchemaContainer GetById(int id)
+        public Task<SchemaContainer> GetById(int id)
         {
             return Get<SchemaContainer>($"/schemas/ids/{id}");
         }
 
-        /// <summary>
-        /// Get a list of registered subjects.
-        /// </summary>
-        /// <returns>Array of subject names</returns>
-        public string[] GetAllSubjects()
+
+        public Task<string[]> GetAllSubjects()
         {
             return Get<string[]>("/subjects");
         }
 
-        /// <summary>
-        /// Get a list of versions registered under the specified subject.
-        /// </summary>
-        /// <param name="subject">the name of the subject</param>
-        /// <returns>Array of versions of the schema registered under this subject</returns>
-        public int[] GetSchemaVersions(string subject)
+        public Task<int[]> GetSchemaVersions(string subject)
         {
             return Get<int[]>($"/subjects/{subject}/versions");
         }
 
-        /// <summary>
-        /// Get a specific version of the schema registered under this subject
-        /// </summary>
-        /// <param name="subject">Name of the subject</param>
-        /// <param name="versionId">Version of the schema to be returned. Valid values for versionId are between [1,2^31-1]</param>
-        public SchemaMetadata GetBySubjectAndId(string subject, int versionId)
+        public Task<SchemaMetadata> GetBySubjectAndId(string subject, int versionId)
         {
             return Get<SchemaMetadata>($"/subjects/{subject}/versions/{versionId}");
         }
 
-        /// <summary>
-        /// Get a latest version of the schema registered under this subject (using /subjects/(string: subject)/versions/latest)
-        /// Note that there may be a new latest schema that gets registered right after this request is served.
-        /// </summary>
-        /// <param name="subject">Name of the subject</param>
-        public SchemaMetadata GetLatestSchemaMetadata(string subject)
+        public Task<SchemaMetadata> GetLatestSchemaMetadata(string subject)
         {
             return Get<SchemaMetadata>($"/subjects/{subject}/versions/latest");
         }
 
-        /// <summary>
-        /// Register a new schema under the specified subject. If successfully registered, this returns the unique identifier of this schema in the registry. The returned identifier should be used to retrieve this schema from the schemas resource and is different from the schema’s version which is associated with the subject. If the same schema is registered under a different subject, the same identifier will be returned. However, the version of the schema may be different under different subjects.
-        /// A schema should be compatible with the previously registered schemas(if there are any) as per the configured compatibility level.The configured compatibility level can be obtained by issuing a GET http:get:: /config/(string: subject). If that returns null, then GET http:get:: /config
-        /// When there are multiple instances of schema registry running in the same cluster, the schema registration request will be forwarded to one of the instances designated as the master.If the master is not available, the client will get an error code indicating that the forwarding has failed.
-        /// </summary>
-        /// <param name="subject">Subject under which the schema will be registered</param>
-        /// <param name="schema">The Avro schema string</param>
-        public int Register(string subject, string schema)
+
+        public async Task<int> Register(string subject, string schema)
         {
-            return RunRequest<IdContainer, SchemaContainer>($"/subjects/{subject}/versions", HttpMethod.Post, new SchemaContainer { Schema = schema }).Id;
+            var result = await RunRequest<IdContainer, SchemaContainer>($"/subjects/{subject}/versions", HttpMethod.Post, new SchemaContainer { Schema = schema });
+            return result.Id;
         }
 
-        /// <summary>
-        /// Check if a schema has already been registered under the specified subject. If so, this returns the schema string along with its globally unique identifier, its version under this subject and the subject name.
-        /// </summary>
-        /// <param name="subject">Subject under which the schema will be registered</param>
-        public ExistingSchemaResponse CheckIfSchemaRegistered(string subject, string schema)
+
+        public Task<ExistingSchemaResponse> CheckIfSchemaRegistered(string subject, string schema)
         {
             return RunRequest<ExistingSchemaResponse, SchemaContainer>($"/subjects/{subject}", HttpMethod.Post, new SchemaContainer { Schema = schema });
         }
 
-        /// <summary>
-        /// Test input schema against a particular version of a subject’s schema for compatibility. Note that the compatibility level applied for the check is the configured compatibility level for the subject (http:get:: /config/(string: subject)). If this subject’s compatibility level was never changed, then the global compatibility level applies (http:get:: /config).
-        /// </summary>
-        /// <param name="subject">Subject of the schema version against which compatibility is to be tested</param>
-        /// <param name="versionId"> Version of the subject’s schema against which compatibility is to be tested. Valid values for versionId are between [1,2^31-1] </param>
-        public bool TestCompatibilityWithVersion(string subject, int versionId, string schema)
+        public Task<bool> TestCompatibilityWithVersion(string subject, int versionId, string schema)
         {
             return RunRequest<bool, SchemaContainer>($"/compatibility/subjects/{subject}/versions/{versionId}", HttpMethod.Post, new SchemaContainer { Schema = schema });
         }
 
-        /// <summary>
-        /// Test input schema against a latest version of a subject’s schema for compatibility. Note that the compatibility level applied for the check is the configured compatibility level for the subject (http:get:: /config/(string: subject)). If this subject’s compatibility level was never changed, then the global compatibility level applies (http:get:: /config).
-        /// </summary>
-        /// <param name="subject">Subject of the schema version against which compatibility is to be tested</param>
-        public bool TestCompatibility(string subject, string schema)
+
+        public async Task<bool> TestCompatibility(string subject, string schema)
         {
-            return RunRequest<CompatibilityFlagResponse, SchemaContainer>(
+            var result = await RunRequest<CompatibilityFlagResponse, SchemaContainer>(
                 $"/compatibility/subjects/{subject}/versions/latest",
                 HttpMethod.Post,
-                new SchemaContainer { Schema = schema }).IsCompatible;
+                new SchemaContainer { Schema = schema });
+                
+            return result.IsCompatible;
         }
 
-        /// <summary>
-        /// Update global compatibility level.
-        /// When there are multiple instances of schema registry running in the same cluster, the update request will be forwarded to one of the instances designated as the master.If the master is not available, the client will get an error code indicating that the forwarding has failed.
-        /// </summary>
-        public CompatibilityLevel GetGlobalConfig()
+        public async Task<CompatibilityLevel> GetGlobalConfig()
         {
-            var compatibilityObject = Get<CompatibilityObject>($"/config");
+            var compatibilityObject = await Get<CompatibilityObject>($"/config");
             return ParseCompatibilityEnum(compatibilityObject);
         }
 
-        /// <summary>
-        /// Get global compatibility level.
-        /// </summary>
-        /// <param name="level">New global compatibility level.</param>
-        public CompatibilityLevel PutGlobalConfig(CompatibilityLevel level)
+        public async Task<CompatibilityLevel> PutGlobalConfig(CompatibilityLevel level)
         {
-            var compatibilityObject = RunRequest<CompatibilityObject, CompatibilityObject>($"/config", HttpMethod.Put, CompatibilityObject.Create(level));
+            var compatibilityObject = await RunRequest<CompatibilityObject, CompatibilityObject>($"/config", HttpMethod.Put, CompatibilityObject.Create(level));
             return ParseCompatibilityEnum(compatibilityObject);
         }
 
 
-        /// <summary>
-        /// Get compatibility level for a subject.
-        /// </summary>
-        /// <param name="subject">Name of the subject</param>
-        public CompatibilityLevel GetSubjectConfig(string subject)
+
+        public async Task<CompatibilityLevel> GetSubjectConfig(string subject)
         {
-            var compatibilityObject = Get<CompatibilityObject>($"/config/{subject}");
+            var compatibilityObject = await Get<CompatibilityObject>($"/config/{subject}");
             return ParseCompatibilityEnum(compatibilityObject);
         }
 
-        /// <summary>
-        /// Update compatibility level for the specified subject.
-        /// </summary>
-        /// <param name="subject">Name of the subject</param>
-        /// <param name="level">New global compatibility level.</param>
-        public CompatibilityLevel PutSubjectConfig(string subject, CompatibilityLevel level)
+
+        public async Task<CompatibilityLevel> PutSubjectConfig(string subject, CompatibilityLevel level)
         {
-            var compatibilityObject = RunRequest<CompatibilityObject, CompatibilityObject>($"/config/{subject}", HttpMethod.Put, CompatibilityObject.Create(level));
+            var compatibilityObject = await RunRequest<CompatibilityObject, CompatibilityObject>($"/config/{subject}", HttpMethod.Put, CompatibilityObject.Create(level));
             return ParseCompatibilityEnum(compatibilityObject);
         }
 
@@ -239,7 +163,6 @@ namespace SchemaRegistry
 
             return (CompatibilityLevel)Enum.Parse(typeof(CompatibilityLevel), compatibilityObject.Compatibility, true);
         }
-
 
 
         // IDisposible implementation
