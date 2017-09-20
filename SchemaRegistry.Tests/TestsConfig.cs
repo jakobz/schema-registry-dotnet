@@ -10,7 +10,7 @@ namespace SchemaRegistry.Tests
     {
         public static ISchemaRegistryApi GetRegistryApi()
         {
-            return new SchemaRegistryApi("http://ecsc00104a5d.epam.com:8081/");
+            return new SchemaRegistryApi("http://schema-registry-sbox.epm-eco.projects.epam.com:8081/");
         }
     }
 }

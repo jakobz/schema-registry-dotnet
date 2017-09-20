@@ -1,13 +1,14 @@
 ﻿using System.Threading.Tasks;
 using SchemaRegistry.Messages;
 using System.Net.Http;
+using System;
 
 namespace SchemaRegistry
 {
     /// <summary>
     /// Confluent Schema Registry API Endpoints, listed at http://docs.confluent.io/1.0.1/schema-registry/docs/api.html
     /// </summary>
-    public interface ISchemaRegistryApi
+    public interface ISchemaRegistryApi: IDisposable
     {
         /// <summary>
         /// Get the schema string identified by the input id.

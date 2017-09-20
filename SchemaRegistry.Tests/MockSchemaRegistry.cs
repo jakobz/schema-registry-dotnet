@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using SchemaRegistry.Messages;
 using com.example.tests;
+using System.Net.Http;
 
 namespace SchemaRegistry.Tests
 {
     public class MockSchemaRegistry : ISchemaRegistryApi
     {        
-        public ExistingSchemaResponse CheckIfSchemaRegistered(string subject, string schema)
+        public Task<ExistingSchemaResponse> CheckIfSchemaRegistered(string subject, string schema)
         {
             throw new NotImplementedException();
         }
@@ -21,85 +21,85 @@ namespace SchemaRegistry.Tests
             throw new NotImplementedException();
         }
 
-        public TResponse Get<TResponse>(string path)
+        public Task<TResponse> Get<TResponse>(string path)
         {
             throw new NotImplementedException();
         }
 
-        public string[] GetAllSubjects()
+        public Task<string[]> GetAllSubjects()
         {
             throw new NotImplementedException();
         }
 
-        public SchemaContainer GetById(int id)
+        public Task<SchemaContainer> GetById(int id)
         {
-            return new SchemaContainer
+            return Task.FromResult(new SchemaContainer
             {
                 Schema = User._SCHEMA.ToString()
-            };
+            });
         }
 
-        public SchemaMetadata GetBySubjectAndId(string subject, int versionId)
+        public Task<SchemaMetadata> GetBySubjectAndId(string subject, int versionId)
         {
-            return new SchemaMetadata
+            return Task.FromResult(new SchemaMetadata
             {
                 Schema = User._SCHEMA.ToString(),
                 Subject = subject,
                 Version = 1
-            };
+            });
         }
 
-        public CompatibilityLevel GetGlobalConfig()
+        public Task<CompatibilityLevel> GetGlobalConfig()
         {
             throw new NotImplementedException();
         }
 
-        public SchemaMetadata GetLatestSchemaMetadata(string subject)
+        public Task<SchemaMetadata> GetLatestSchemaMetadata(string subject)
         {
             throw new NotImplementedException();
         }
 
-        public int[] GetSchemaVersions(string subject)
+        public Task<int[]> GetSchemaVersions(string subject)
         {
             throw new NotImplementedException();
         }
 
-        public CompatibilityLevel GetSubjectConfig(string subject)
+        public Task<CompatibilityLevel> GetSubjectConfig(string subject)
         {
             throw new NotImplementedException();
         }
 
-        public TResponse Post<TResponse>(string path)
+        public Task<TResponse> Post<TResponse>(string path)
         {
             throw new NotImplementedException();
         }
 
-        public CompatibilityLevel PutGlobalConfig(CompatibilityLevel level)
+        public Task<CompatibilityLevel> PutGlobalConfig(CompatibilityLevel level)
         {
             throw new NotImplementedException();
         }
 
-        public CompatibilityLevel PutSubjectConfig(string subject, CompatibilityLevel level)
+        public Task<CompatibilityLevel> PutSubjectConfig(string subject, CompatibilityLevel level)
         {
             throw new NotImplementedException();
         }
 
-        public int Register(string subject, string schema)
+        public Task<int> Register(string subject, string schema)
         {
-            return 3;
+            return Task.FromResult(3);
         }
 
-        public TResponse RunRequest<TResponse, TRequest>(string path, HttpMethod method, TRequest payload)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TestCompatibility(string subject, string schema)
+        public Task<TResponse> RunRequest<TResponse, TRequest>(string path, HttpMethod method, TRequest payload)
         {
             throw new NotImplementedException();
         }
 
-        public bool TestCompatibilityWithVersion(string subject, int versionId, string schema)
+        public Task<bool> TestCompatibility(string subject, string schema)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TestCompatibilityWithVersion(string subject, int versionId, string schema)
         {
             throw new NotImplementedException();
         }

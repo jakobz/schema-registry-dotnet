@@ -15,52 +15,52 @@ namespace SchemaRegistry.Tests
     public class SchemaRegistryApiTests
     {
         [Test]
-        public void CanReadSchemas()
+        public async void CanReadSchemas()
         {
             using (var registry = TestsConfig.GetRegistryApi())
             {
-                var subjects = registry.GetAllSubjects();
+                var subjects = await registry.GetAllSubjects();
                 Console.WriteLine(subjects.ToJson());
 
-                var versions = registry.GetSchemaVersions(subjects[0]);
+                var versions = await registry.GetSchemaVersions(subjects[0]);
                 Console.WriteLine(versions.ToJson());
 
-                var schema = registry.GetById(versions[0]);
+                var schema = await registry.GetById(versions[0]);
                 Console.WriteLine(schema.Schema);
 
-                var schemaVersionSpecific = registry.GetBySubjectAndId(subjects[0], versions[0]);
+                var schemaVersionSpecific = await registry.GetBySubjectAndId(subjects[0], versions[0]);
                 Console.WriteLine(schemaVersionSpecific.ToJson());
 
-                var schemaVersionLatest = registry.GetLatestSchemaMetadata(subjects[0]);
+                var schemaVersionLatest = await registry.GetLatestSchemaMetadata(subjects[0]);
                 Console.WriteLine(schemaVersionLatest.ToJson());
             }
         }
 
         [Test]
-        public void CanCheckIfSchemaRegistered()
+        public async void CanCheckIfSchemaRegistered()
         {
             using (var registry = TestsConfig.GetRegistryApi())
             {
-                var subject = registry.GetAllSubjects()[0];
-                var schema = registry.GetLatestSchemaMetadata(subject).Schema;
-                var existing = registry.CheckIfSchemaRegistered(subject, schema);
+                var subject = (await registry.GetAllSubjects())[0];
+                var schema = (await registry.GetLatestSchemaMetadata(subject)).Schema;
+                var existing = await registry.CheckIfSchemaRegistered(subject, schema);
                 Assert.IsNotNull(existing);
                 Assert.AreEqual(schema, existing.Schema);
                 Assert.AreNotEqual(existing.Id, 0);
                 Assert.AreEqual(subject, existing.Subject);
-                Assert.IsTrue(registry.TestCompatibility(subject, schema));
+                Assert.IsTrue((await registry.TestCompatibility(subject, schema)));
 
             }
         }
 
         [Test]
-        public void CanReadConfig()
+        public async void CanReadConfig()
         {
             using (var registry = TestsConfig.GetRegistryApi())
             {
-                registry.GetGlobalConfig();
-                var subject = registry.GetAllSubjects()[0];
-                registry.GetSubjectConfig(subject);
+                await registry.GetGlobalConfig();
+                var subject = (await registry.GetAllSubjects())[0];
+                await registry.GetSubjectConfig(subject);
             }
         }
 
@@ -72,32 +72,32 @@ namespace SchemaRegistry.Tests
         string CompletelyIncompatibleSchema = "{'type':'record','name':'myrecord','fields':[{'name':'newf','type':'string'}]}".Replace("'", "\"");
 
         [Test]
-        public void CanTestCompatibility()
+        public async void CanTestCompatibility()
         {
             using (var registry = TestsConfig.GetRegistryApi())
             {
-                var subject = registry.GetAllSubjects()[0];
-                var schema = registry.GetLatestSchemaMetadata(subject).Schema;
-                registry.PutSubjectConfig(subject, CompatibilityLevel.Backward);
-                Assert.IsTrue(registry.TestCompatibility(subject, schema));
-                Assert.IsTrue(registry.TestCompatibility(subject, FullyCompatibleSchema));
-                Assert.IsFalse(registry.TestCompatibility(subject, BackwardsIncompatibleSchema));
-                Assert.IsFalse(registry.TestCompatibility(subject, CompletelyIncompatibleSchema));
-                registry.PutSubjectConfig(subject, CompatibilityLevel.Forward);
-                Assert.IsTrue(registry.TestCompatibility(subject, schema));
-                Assert.IsTrue(registry.TestCompatibility(subject, ForwardCompatibleSchema));
-                Assert.IsFalse(registry.TestCompatibility(subject, ForwardIncompatibleSchema));
-                Assert.IsFalse(registry.TestCompatibility(subject, CompletelyIncompatibleSchema));
+                var subject = (await registry.GetAllSubjects())[0];
+                var schema = (await registry.GetLatestSchemaMetadata(subject)).Schema;
+                await registry.PutSubjectConfig(subject, CompatibilityLevel.Backward);
+                Assert.IsTrue(await registry.TestCompatibility(subject, schema));
+                Assert.IsTrue(await registry.TestCompatibility(subject, FullyCompatibleSchema));
+                Assert.IsFalse(await registry.TestCompatibility(subject, BackwardsIncompatibleSchema));
+                Assert.IsFalse(await registry.TestCompatibility(subject, CompletelyIncompatibleSchema));
+                await registry.PutSubjectConfig(subject, CompatibilityLevel.Forward);
+                Assert.IsTrue(await registry.TestCompatibility(subject, schema));
+                Assert.IsTrue(await registry.TestCompatibility(subject, ForwardCompatibleSchema));
+                Assert.IsFalse(await registry.TestCompatibility(subject, ForwardIncompatibleSchema));
+                Assert.IsFalse(await registry.TestCompatibility(subject, CompletelyIncompatibleSchema));
 
-                registry.PutSubjectConfig(subject, CompatibilityLevel.Full);
-                Assert.IsTrue(registry.TestCompatibility(subject, schema));
-                Assert.IsTrue(registry.TestCompatibility(subject, FullyCompatibleSchema));
-                Assert.IsFalse(registry.TestCompatibility(subject, BackwardsIncompatibleSchema));
-                Assert.IsFalse(registry.TestCompatibility(subject, ForwardCompatibleSchema));
-                Assert.IsFalse(registry.TestCompatibility(subject, ForwardIncompatibleSchema));
-                Assert.IsFalse(registry.TestCompatibility(subject, CompletelyIncompatibleSchema));
+                await registry.PutSubjectConfig(subject, CompatibilityLevel.Full);
+                Assert.IsTrue(await registry.TestCompatibility(subject, schema));
+                Assert.IsTrue(await registry.TestCompatibility(subject, FullyCompatibleSchema));
+                Assert.IsFalse(await registry.TestCompatibility(subject, BackwardsIncompatibleSchema));
+                Assert.IsFalse(await registry.TestCompatibility(subject, ForwardCompatibleSchema));
+                Assert.IsFalse(await registry.TestCompatibility(subject, ForwardIncompatibleSchema));
+                Assert.IsFalse(await registry.TestCompatibility(subject, CompletelyIncompatibleSchema));
 
-                registry.PutSubjectConfig(subject, CompatibilityLevel.Forward);                
+                await registry.PutSubjectConfig(subject, CompatibilityLevel.Forward);                
             }
         }
 
@@ -106,7 +106,7 @@ namespace SchemaRegistry.Tests
         {
             using (var registry = TestsConfig.GetRegistryApi())
             {
-                var subject = "dotnet-schema-registry-api-test1";
+                var subject = "dotnet-schema-registry-api-test2";
 
                 registry.PutSubjectConfig(subject, CompatibilityLevel.Backward);
 

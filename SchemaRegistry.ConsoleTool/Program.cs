@@ -26,20 +26,16 @@ namespace SchemaRegistry.ConsoleTool
             }
         }
 
-        [Verb(Description = "Generate classes")]
-        public static void Generate(string rootPath)
+        [Verb(Description = "Updates subject compatibility")]
+        public static void List(
+            [Description("Schema registry URL")] string url
+        )
         {
-            var gen = new Avro.codegen.CodeGen();
-            var schemaPath = Path.Combine(rootPath, "Schemas");
-
-            foreach (var schemaFileName in Directory.GetFiles(schemaPath))
+            using (var registry = new SchemaRegistryApi(url))
             {
-                var schema = Avro.Schema.Parse(File.ReadAllText(Path.Combine(schemaPath, schemaFileName)));
-                gen.AddSchema(schema);
+                var subjects = registry.GetAllSubjects().Result;
+                Console.WriteLine(String.Join(", ", subjects));
             }
-
-            gen.GenerateCode();
-            gen.WriteTypes(Path.Combine(rootPath, "Generated"));
         }
     }
 
