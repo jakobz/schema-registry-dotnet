@@ -1,6 +1,6 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SchemaRegistry.Messages;
+using System.Net.Http;
 
 namespace SchemaRegistry
 {

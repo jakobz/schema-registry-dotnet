@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchemaRegistry.ConsoleTool", "SchemaRegistry.ConsoleTool\SchemaRegistry.ConsoleTool.csproj", "{C8E7B782-6DC0-4B86-B8ED-EE91A5C06B96}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchemaRegistry.Tests", "SchemaRegistry.Tests\SchemaRegistry.Tests.csproj", "{FCAB2060-BD99-4E39-BB4D-D1D6A23B8ED6}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SchemaRegistry", "SchemaRegistry\SchemaRegistry.xproj", "{D5464868-4041-4B70-A14A-FFF2B1C04F50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchemaRegistry", "SchemaRegistry\SchemaRegistry.csproj", "{D5464868-4041-4B70-A14A-FFF2B1C04F50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

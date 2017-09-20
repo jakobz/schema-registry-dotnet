@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SchemaRegistry.ConsoleTool</RootNamespace>
     <AssemblyName>SchemaRegistry.ConsoleTool</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -73,7 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SchemaRegistry\SchemaRegistry.csproj">
-      <Project>{2a8ae077-46bb-4e75-a741-111dd52e046d}</Project>
+      <Project>{d5464868-4041-4b70-a14a-fff2b1c04f50}</Project>
       <Name>SchemaRegistry</Name>
     </ProjectReference>
   </ItemGroup>

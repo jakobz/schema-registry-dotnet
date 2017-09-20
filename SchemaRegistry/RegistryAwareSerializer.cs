@@ -11,6 +11,18 @@ using System.Reflection;
 
 namespace SchemaRegistry
 {
+    /// <summary>
+    /// Wrapper for AVRO serializer-deserializer, which works with schema registry.
+    /// Concrete serializer implementation is pluggable via serializerFactory constructor argument.
+    /// On serialize: 
+    /// - Access Schema Registry to check Schema compatibility and get Schema ID (statically cached)
+    /// - Write prefix containing schema ID to the message
+    /// On deserialize:
+    /// - Reads message prefix to extract Schema ID
+    /// - Access Schema Registry to extract Schema
+    /// - Provides retrieved schema as Writer Schema to the serializer
+    /// </summary>
+    /// <typeparam name="T">Message DTO</typeparam>
     public class RegistryAwareSerializer<T>
     {
         private const byte MagicByte = 0;
@@ -41,7 +53,7 @@ namespace SchemaRegistry
             var magicByte = reader.ReadByte();
             if (magicByte != MagicByte)
             {
-                throw new SerializationException("Magic byte is not found in the schema-aware message");
+                throw new SerializationException("Magic byte is not found at the beginning og the schema-aware message. Make sure the message is in AVRO format, and is written with Confluent-compatible driver. Probably someone written JSON message in your AVRO topic?");
             }
 
             var schemaId = IPAddress.NetworkToHostOrder(reader.ReadInt32());
@@ -65,7 +77,7 @@ namespace SchemaRegistry
 
         public void Serialize(T obj, BinaryWriter writer)
         {
-            var isAndSerializer = _serializersCache.GetOrAdd(typeof(T), type =>
+            var idAndSerializer = _serializersCache.GetOrAdd(typeof(T), type =>
             {
                 var newSerializer = _serializerFactory.BuildSerializer();
                 var schema = _serializerFactory.GetSchema();
@@ -73,8 +85,8 @@ namespace SchemaRegistry
                 return Tuple.Create(newSchemaId, (object)newSerializer);
             });
 
-            var schemaId = isAndSerializer.Item1;
-            var serializer = (Action<Stream, T>)isAndSerializer.Item2;
+            var schemaId = idAndSerializer.Item1;
+            var serializer = (Action<Stream, T>)idAndSerializer.Item2;
             writer.Write(MagicByte);
             writer.Write(IPAddress.HostToNetworkOrder(schemaId));
             serializer(writer.BaseStream, obj);
