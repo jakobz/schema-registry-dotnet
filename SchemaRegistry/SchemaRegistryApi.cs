@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,8 +35,8 @@ namespace SchemaRegistry
                 if (payload != null)
                 {
                     var payloadString = JsonUtils.ToJson(payload);
-                    request.Headers.Add("Content-Type", "application/json");
                     request.Content = new StringContent(payloadString, Encoding.UTF8);
+                    request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 }
 
                 var response = await httpClient.SendAsync(request);
