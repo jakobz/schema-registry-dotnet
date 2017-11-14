@@ -1,8 +1,10 @@
 # schema-registry-dotnet
 
+<!---
 [![Build status](https://ci.appveyor.com/api/projects/status/iw1d99tqhchpdtks/branch/master?svg=true)](https://ci.appveyor.com/project/jakobz/schema-registry-dotnet/branch/master)
-
+-->
 .Net wrapper for the [Confluent Schema Registry](http://docs.confluent.io/1.0.1/schema-registry/docs/index.html) REST API.
+Nuget package: https://www.nuget.org/packages/SchemaRegistry/
 
 REST API usage:
 ```c#
@@ -36,8 +38,6 @@ On serialize:
 On deserialize:
 - Reads message prefix to check magic 0 byte and extract Schema ID
 - Access Schema Registry to get Schema
-- Provides retrieved schema as Writer Schema to the serializerConcrete serializer implementation is pluggable via serializerFactory constructor argument.
+- Provides retrieved schema as Writer Schema to the serializer
 
-AVRO serializer implementation is pluggable
-
-Example implementation for [Apache AVRO library](https://www.nuget.org/packages/Apache.Avro/) is [included in tests](https://github.com/jakobz/schema-registry-dotnet/blob/master/SchemaRegistry.Tests/Serialization/AvroSerializerFactory.cs)
+AVRO serializer implementation is pluggable. Example implementation for [Apache AVRO library](https://www.nuget.org/packages/Apache.Avro/) is [included in tests](https://github.com/jakobz/schema-registry-dotnet/blob/master/SchemaRegistry.Tests/Serialization/AvroSerializerFactory.cs)
