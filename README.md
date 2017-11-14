@@ -25,9 +25,11 @@ REST API usage:
 ```
 
 There's also RegistryAwareSerializer<T> class, which implements Confluent's AVRO+Schema registry convention.
+  
 On serialize: 
 - Access Schema Registry to check Schema compatibility and get Schema ID (statically cached)
 - Write prefix containing the 0 magic byte and the schema ID to the message
+
 On deserialize:
 - Reads message prefix to check magic 0 byte and extract Schema ID
 - Access Schema Registry to get Schema
