@@ -10,6 +10,12 @@ namespace SchemaRegistry.Core.ConsoleTool
             {
                 var subjects = registry.GetAllSubjects().Result;
                 Console.WriteLine(String.Join(", ", subjects));
+
+                var subject = subjects[0];
+                var meta = registry.GetLatestSchemaMetadata(subject).Result;
+                Console.WriteLine(meta.Version);
+                var isCompatible = registry.TestCompatibility(subject, meta.Schema).Result;
+                Console.WriteLine(isCompatible);
             }
         }
     }
