@@ -37,8 +37,6 @@ On serialize:
 On deserialize:
 - Reads message prefix to check magic 0 byte and extract Schema ID
 - Access Schema Registry to get Schema
-- Provides retrieved schema as Writer Schema to the serializerConcrete serializer implementation is pluggable via serializerFactory constructor argument.
+- Provides retrieved schema as Writer Schema to the serializer
 
-AVRO serializer implementation is pluggable
-
-Example implementation for [Apache AVRO library](https://www.nuget.org/packages/Apache.Avro/) is [included in tests](https://github.com/jakobz/schema-registry-dotnet/blob/master/SchemaRegistry.Tests/Serialization/AvroSerializerFactory.cs)
+AVRO serializer implementation is pluggable. Example implementation for [Apache AVRO library](https://www.nuget.org/packages/Apache.Avro/) is [included in tests](https://github.com/jakobz/schema-registry-dotnet/blob/master/SchemaRegistry.Tests/Serialization/AvroSerializerFactory.cs)
