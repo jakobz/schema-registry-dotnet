@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace SchemaRegistry.Core.ConsoleTool
 {
@@ -8,14 +9,22 @@ namespace SchemaRegistry.Core.ConsoleTool
         {
             var registry = new SchemaRegistryApi("http://schema-registry-sbox.epm-eco.projects.epam.com:8081");
             {
-                var subjects = registry.GetAllSubjects().Result;
-                Console.WriteLine(String.Join(", ", subjects));
+                // Get first 10 subjects
+                var subjects = registry.GetAllSubjects().Result.Take(10);
+                Console.WriteLine("First 10 subjects: " + String.Join(", ", subjects));
 
-                var subject = subjects[0];
+                // Get last schema by subject
+                var subject = subjects.First();
                 var meta = registry.GetLatestSchemaMetadata(subject).Result;
-                Console.WriteLine(meta.Version);
+                Console.WriteLine($"Last version of the {subject} subject: {meta.Version}");
+
+                // Check schema compatibiliy
                 var isCompatible = registry.TestCompatibility(subject, meta.Schema).Result;
-                Console.WriteLine(isCompatible);
+                Console.WriteLine($"Is the schema compatible to itself: {isCompatible}");
+
+                // Register the schema (returns the same ID for identical schema)
+                var newSchemaId = registry.Register(subject, meta.Schema).Result;
+                Console.WriteLine($"Schema id: {newSchemaId}");
             }
         }
     }

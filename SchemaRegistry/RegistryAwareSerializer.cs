@@ -12,7 +12,7 @@ using System.Reflection;
 namespace SchemaRegistry
 {
     /// <summary>
-    /// Wrapper for AVRO serializer-deserializer, which works with schema registry.
+    /// Wrapper for AVRO serializer-deserializer, which implements Confluent's AVRO+Schema registry convention.
     /// Concrete serializer implementation is pluggable via serializerFactory constructor argument.
     /// On serialize: 
     /// - Access Schema Registry to check Schema compatibility and get Schema ID (statically cached)

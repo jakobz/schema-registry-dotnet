@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchemaRegistry", "SchemaReg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchemaRegistry.Core.ConsoleTool", "SchemaRegistry.Core.ConsoleTool\SchemaRegistry.Core.ConsoleTool.csproj", "{9CF10442-19FF-47AB-97E2-CADA25FC31FD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchemaRegistry.Tests", "SchemaRegistry.Tests\SchemaRegistry.Tests.csproj", "{FCAB2060-BD99-4E39-BB4D-D1D6A23B8ED6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9CF10442-19FF-47AB-97E2-CADA25FC31FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CF10442-19FF-47AB-97E2-CADA25FC31FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CF10442-19FF-47AB-97E2-CADA25FC31FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCAB2060-BD99-4E39-BB4D-D1D6A23B8ED6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCAB2060-BD99-4E39-BB4D-D1D6A23B8ED6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCAB2060-BD99-4E39-BB4D-D1D6A23B8ED6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCAB2060-BD99-4E39-BB4D-D1D6A23B8ED6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
