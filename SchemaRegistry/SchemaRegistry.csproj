@@ -5,11 +5,14 @@
     <Version>1.1.1</Version>
     <Description>.NET library to work with Confluent Schema Registry REST API.</Description>
     <Authors>Yakov Zhmourov</Authors>
-    <Company>SchemaRegistry</Company>
-    <Product>SchemaRegistry</Product>
+    <Company></Company>
+    <Product></Product>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <AssemblyVersion>1.1.1.0</AssemblyVersion>
     <FileVersion>1.1.1.0</FileVersion>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jakobz/schema-registry-dotnet</RepositoryUrl>
+    <PackageId>SchemaRegistry</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
