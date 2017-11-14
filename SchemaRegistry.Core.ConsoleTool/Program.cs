@@ -7,7 +7,7 @@ namespace SchemaRegistry.Core.ConsoleTool
     {
         static void Main(string[] args)
         {
-            var registry = new SchemaRegistryApi("http://schema-registry-sbox.epm-eco.projects.epam.com:8081");
+            using (var registry = new SchemaRegistryApi("http://schema-registry-sbox.epm-eco.projects.epam.com:8081"))
             {
                 // Get first 10 subjects
                 var subjects = registry.GetAllSubjects().Result.Take(10);
