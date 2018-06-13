@@ -40,4 +40,4 @@ On deserialize:
 - Access Schema Registry to get Schema
 - Provides retrieved schema as Writer Schema to the serializer
 
-AVRO serializer implementation is pluggable. Example implementation for [Apache AVRO library](https://www.nuget.org/packages/Apache.Avro/) is [included in tests](https://github.com/jakobz/schema-registry-dotnet/blob/master/SchemaRegistry.Tests/Serialization/AvroSerializerFactory.cs)
+AVRO serializer implementation is pluggable. Example implementation for [Confluent Apache AVRO library](https://www.nuget.org/packages/Confluent.Apache.Avro/) is [included in tests](https://github.com/jakobz/schema-registry-dotnet/blob/master/SchemaRegistry.Tests/Serialization/AvroSerializerFactory.cs)
