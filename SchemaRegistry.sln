@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchemaRegistry.ConsoleTool", "SchemaRegistry.ConsoleTool\SchemaRegistry.ConsoleTool.csproj", "{C8E7B782-6DC0-4B86-B8ED-EE91A5C06B96}"
 EndProject
@@ -10,6 +10,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchemaRegistry.Core.ConsoleTool", "SchemaRegistry.Core.ConsoleTool\SchemaRegistry.Core.ConsoleTool.csproj", "{9CF10442-19FF-47AB-97E2-CADA25FC31FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchemaRegistry.Tests", "SchemaRegistry.Tests\SchemaRegistry.Tests.csproj", "{FCAB2060-BD99-4E39-BB4D-D1D6A23B8ED6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6DD6912A-B51D-4A37-8661-8D9A6AD4F4C6}"
+	ProjectSection(SolutionItems) = preProject
+		SchemaRegistry.nuspec = SchemaRegistry.nuspec
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +41,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6EBCB298-6A18-49CC-9C04-0BAE47B9FA2B}
 	EndGlobalSection
 EndGlobal

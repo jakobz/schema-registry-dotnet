@@ -1,24 +1,19 @@
 ﻿using com.example.tests;
 using NUnit.Framework;
 using SchemaRegistry.Tests.Serialization;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SchemaRegistry.Tests
 {
     [TestFixture]
     public class KafkaSerializerTests
     {
-        byte[] TestMessage = new byte[] { 0, 0, 0, 0, 3, 26, 78, 97, 109, 101, 56,
+        private byte[] TestMessage = new byte[] { 0, 0, 0, 0, 3, 26, 78, 97, 109, 101, 56,
             49, 51, 49, 51, 52, 52, 53, 55, 2, 242, 201, 187, 135, 6, 2, 28, 67, 111,
             108, 111, 114, 56, 49, 51, 49, 51, 52, 52, 53, 55 };
 
-        User TestUser = new User
+        private User TestUser = new User
         {
             name = "Name813134457",
             favorite_color = "Color813134457",
@@ -50,7 +45,7 @@ namespace SchemaRegistry.Tests
             var serializer = GetSerializer();
 
             var ms = new MemoryStream();
-            
+
             using (var writer = new BinaryWriter(ms, Encoding.UTF8, true))
             {
                 serializer.Serialize(TestUser, writer);

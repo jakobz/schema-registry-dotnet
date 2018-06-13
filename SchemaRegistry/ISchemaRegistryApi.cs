@@ -98,7 +98,7 @@ namespace SchemaRegistry
         /// </summary>
         /// <param name="subject">Name of the subject</param>
         Task<CompatibilityLevel> GetSubjectConfig(string subject);
-      
+
         /// <summary>
         /// Execute generic API request
         /// </summary>

@@ -1,10 +1,6 @@
 ﻿using NUnit.Framework;
 using SchemaRegistry.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework.Constraints;
 using SchemaRegistry.Messages;
 
@@ -64,12 +60,12 @@ namespace SchemaRegistry.Tests
             }
         }
 
-        string InitialSchema = "{'type':'record','name':'myrecord','fields':[{'name':'f1','type':'string'}]}".Replace("'", "\"");
-        string FullyCompatibleSchema = "{'type':'record','name':'myrecord','fields':[{'name':'f1','type':'string'},{'name':'f2','type':'string','default': 'none'}]}".Replace("'", "\"");
-        string BackwardsIncompatibleSchema = "{'type':'record','name':'myrecord','fields':[{'name':'f1','type':'string'},{'name':'f2','type':'string'}]}".Replace("'", "\"");
-        string ForwardIncompatibleSchema = "{'type':'record','name':'myrecord','fields':[{'name':'f2','type':'string'}]}".Replace("'", "\"");
-        string ForwardCompatibleSchema = "{'type':'record','name':'myrecord','fields':[{'name':'f1','type':'string','default':'none'},{'name':'f2','type':'string'}]}".Replace("'", "\"");
-        string CompletelyIncompatibleSchema = "{'type':'record','name':'myrecord','fields':[{'name':'newf','type':'string'}]}".Replace("'", "\"");
+        private string InitialSchema = "{'type':'record','name':'myrecord','fields':[{'name':'f1','type':'string'}]}".Replace("'", "\"");
+        private string FullyCompatibleSchema = "{'type':'record','name':'myrecord','fields':[{'name':'f1','type':'string'},{'name':'f2','type':'string','default': 'none'}]}".Replace("'", "\"");
+        private string BackwardsIncompatibleSchema = "{'type':'record','name':'myrecord','fields':[{'name':'f1','type':'string'},{'name':'f2','type':'string'}]}".Replace("'", "\"");
+        private string ForwardIncompatibleSchema = "{'type':'record','name':'myrecord','fields':[{'name':'f2','type':'string'}]}".Replace("'", "\"");
+        private string ForwardCompatibleSchema = "{'type':'record','name':'myrecord','fields':[{'name':'f1','type':'string','default':'none'},{'name':'f2','type':'string'}]}".Replace("'", "\"");
+        private string CompletelyIncompatibleSchema = "{'type':'record','name':'myrecord','fields':[{'name':'newf','type':'string'}]}".Replace("'", "\"");
 
         [Test]
         public async void CanTestCompatibility()
@@ -97,7 +93,7 @@ namespace SchemaRegistry.Tests
                 Assert.IsFalse(await registry.TestCompatibility(subject, ForwardIncompatibleSchema));
                 Assert.IsFalse(await registry.TestCompatibility(subject, CompletelyIncompatibleSchema));
 
-                await registry.PutSubjectConfig(subject, CompatibilityLevel.Forward);                
+                await registry.PutSubjectConfig(subject, CompatibilityLevel.Forward);
             }
         }
 

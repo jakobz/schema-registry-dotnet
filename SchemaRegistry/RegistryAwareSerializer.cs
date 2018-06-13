@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
 
 namespace SchemaRegistry
 {
     /// <summary>
     /// Wrapper for AVRO serializer-deserializer, which implements Confluent's AVRO+Schema registry convention.
     /// Concrete serializer implementation is pluggable via serializerFactory constructor argument.
-    /// On serialize: 
+    /// On serialize:
     /// - Access Schema Registry to check Schema compatibility and get Schema ID (statically cached)
     /// - Write prefix containing schema ID to the message
     /// On deserialize:
@@ -26,25 +21,23 @@ namespace SchemaRegistry
     public class RegistryAwareSerializer<T>
     {
         private const byte MagicByte = 0;
-        private string _topic;
-        private ISchemaRegistryApi _registryApi;
-        private bool _isKey;
-        private string _subject;
-        private ISerializerFactory<T> _serializerFactory;
+        private readonly ISchemaRegistryApi _registryApi;
+        private readonly string _subject;
+        private readonly ISerializerFactory<T> _serializerFactory;
+        private readonly string _environment;
 
         // caches
-        private static ConcurrentDictionary<int, object> _deserializersCache
-            = new ConcurrentDictionary<int, object>();
+        private static readonly ConcurrentDictionary<Tuple<int, string>, object> DeserializersCache
+            = new ConcurrentDictionary<Tuple<int, string>, object>();
 
-        private static ConcurrentDictionary<Type, Tuple<int, object>> _serializersCache 
-            = new ConcurrentDictionary<Type, Tuple<int, object>>();
+        private static readonly ConcurrentDictionary<Tuple<Type, string>, Tuple<int, object>> SerializersCache
+            = new ConcurrentDictionary<Tuple<Type, string>, Tuple<int, object>>();
 
-        public RegistryAwareSerializer(string topic, ISchemaRegistryApi registryApi, ISerializerFactory<T> serializerFactory, bool isKey = false)
+        public RegistryAwareSerializer(string topic, ISchemaRegistryApi registryApi, ISerializerFactory<T> serializerFactory, bool isKey = false, string environment = "Default")
         {
-            _topic = topic;
             _registryApi = registryApi;
             _serializerFactory = serializerFactory;
-            _isKey = isKey;
+            _environment = environment;
             _subject = topic + (isKey ? "-key" : "-value");
         }
 
@@ -53,12 +46,12 @@ namespace SchemaRegistry
             var magicByte = reader.ReadByte();
             if (magicByte != MagicByte)
             {
-                throw new SerializationException("Magic byte is not found at the beginning og the schema-aware message. Make sure the message is in AVRO format, and is written with Confluent-compatible driver. Probably someone written JSON message in your AVRO topic?");
+                throw new SerializationException("Magic byte is not found at the beginning or the schema-aware message. Make sure the message is in AVRO format, and is written with Confluent-compatible driver. Probably someone written JSON message in your AVRO topic?");
             }
 
             var schemaId = IPAddress.NetworkToHostOrder(reader.ReadInt32());
 
-            var deserializer = (Func<Stream, T>)_deserializersCache.GetOrAdd(schemaId, _ =>
+            var deserializer = (Func<Stream, T>)DeserializersCache.GetOrAdd(Tuple.Create(schemaId, _environment), _ =>
             {
                 var writerSchema = _registryApi.GetById(schemaId).Result.Schema;
                 var newSerializer = _serializerFactory.BuildDeserializer(writerSchema);
@@ -77,7 +70,7 @@ namespace SchemaRegistry
 
         public void Serialize(T obj, BinaryWriter writer)
         {
-            var idAndSerializer = _serializersCache.GetOrAdd(typeof(T), type =>
+            var idAndSerializer = SerializersCache.GetOrAdd(Tuple.Create(typeof(T), _environment), type =>
             {
                 var newSerializer = _serializerFactory.BuildSerializer();
                 var schema = _serializerFactory.GetSchema();

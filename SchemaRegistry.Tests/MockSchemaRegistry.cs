@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using SchemaRegistry.Messages;
 using com.example.tests;
@@ -10,7 +7,7 @@ using System.Net.Http;
 namespace SchemaRegistry.Tests
 {
     public class MockSchemaRegistry : ISchemaRegistryApi
-    {        
+    {
         public Task<ExistingSchemaResponse> CheckIfSchemaRegistered(string subject, string schema)
         {
             throw new NotImplementedException();

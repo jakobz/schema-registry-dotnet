@@ -3,15 +3,15 @@ using System.Linq;
 
 namespace SchemaRegistry.Core.ConsoleTool
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             using (var registry = new SchemaRegistryApi("http://schema-registry-sbox.epm-eco.projects.epam.com:8081"))
             {
                 // Get first 10 subjects
                 var subjects = registry.GetAllSubjects().Result.Take(10);
-                Console.WriteLine("First 10 subjects: " + String.Join(", ", subjects));
+                Console.WriteLine("First 10 subjects: " + string.Join(", ", subjects));
 
                 // Get last schema by subject
                 var subject = subjects.First();

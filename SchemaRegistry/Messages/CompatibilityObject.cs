@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchemaRegistry.Messages
 {
@@ -11,8 +7,9 @@ namespace SchemaRegistry.Messages
         public string Compatibility { get; set; }
 
         // For some reason, get requests return "compatibilityLevel", while PUT requests accepts and returns "compatibility" field
-        public string CompatibilityLevel {
-            set { Compatibility = value; } 
+        public string CompatibilityLevel
+        {
+            set => Compatibility = value;
         }
 
         public static CompatibilityObject Create(CompatibilityLevel level)
@@ -27,7 +24,7 @@ namespace SchemaRegistry.Messages
 
             return new CompatibilityObject
             {
-                Compatibility = Enum.GetName(typeof(CompatibilityLevel), level).ToUpperInvariant()
+                Compatibility = Enum.GetName(typeof(CompatibilityLevel), level)?.ToUpperInvariant()
             };
         }
     }

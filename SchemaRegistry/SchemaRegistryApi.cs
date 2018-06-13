@@ -1,8 +1,6 @@
 ﻿using SchemaRegistry.Messages;
 using SchemaRegistry.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -11,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace SchemaRegistry
 {
-    public class SchemaRegistryApi : IDisposable, ISchemaRegistryApi
+    public class SchemaRegistryApi : ISchemaRegistryApi
     {
-        private string _registryUrl;
+        private readonly string _registryUrl;
 
         public SchemaRegistryApi(string url)
         {
@@ -26,7 +24,7 @@ namespace SchemaRegistry
         {
             using (var httpClient = new HttpClient())
             {
-                HttpRequestMessage request = new HttpRequestMessage();
+                var request = new HttpRequestMessage();
                 request.Headers.Add("Accept", "application/vnd.schemaregistry.v1+json, application/vnd.schemaregistry+json, application/json");
                 request.Method = method;
                 var url = _registryUrl + path;
@@ -34,7 +32,7 @@ namespace SchemaRegistry
 
                 if (payload != null)
                 {
-                    var payloadString = JsonUtils.ToJson(payload);
+                    var payloadString = payload.ToJson();
                     request.Content = new StringContent(payloadString, Encoding.UTF8);
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 }
@@ -121,7 +119,7 @@ namespace SchemaRegistry
                 $"/compatibility/subjects/{subject}/versions/latest",
                 HttpMethod.Post,
                 new SchemaContainer { Schema = schema });
-                
+
             return result.IsCompatible;
         }
 
@@ -153,11 +151,11 @@ namespace SchemaRegistry
         }
 
 
-        // Helpers 
+        // Helpers
 
         private static CompatibilityLevel ParseCompatibilityEnum(CompatibilityObject compatibilityObject)
         {
-            if (compatibilityObject == null || compatibilityObject.Compatibility == null)
+            if (compatibilityObject?.Compatibility == null)
             {
                 return CompatibilityLevel.NotSet;
             }

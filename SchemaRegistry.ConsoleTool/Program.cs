@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SchemaRegistry.Utils;
 using CLAP;
-using System.IO;
 
 namespace SchemaRegistry.ConsoleTool
 {
-    class Commands
+    internal class Commands
     {
         [Empty, Help]
         public static void Help(string help)
@@ -34,14 +28,14 @@ namespace SchemaRegistry.ConsoleTool
             using (var registry = new SchemaRegistryApi(url))
             {
                 var subjects = registry.GetAllSubjects().Result;
-                Console.WriteLine(String.Join(", ", subjects));
+                Console.WriteLine(string.Join(", ", subjects));
             }
         }
     }
 
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Parser.RunConsole<Commands>(args);
         }
